@@ -1,0 +1,9 @@
+# Tian Qi IP Automation Project
+
+Selenium-based automation project for Tian Qi IP platform.
+
+## Setup
+1. Clone the repository
+2. Install dependencies
+3. Configure environment variables
+4. Run the tests
