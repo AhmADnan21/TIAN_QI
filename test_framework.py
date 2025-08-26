@@ -289,7 +289,7 @@ def click_add_paid_account(test_case):
 def wait_for_package_popup(test_case):
     """Wait for the package selection popup to appear"""
     with track_step(test_case, "Wait for Popup", "Wait for package selection popup"):
-        wait.until(EC.visibility_of_element_located((By.ID, "__BVID__69___BV_modal_header_")))
+        wait.until(EC.visibility_of_element_located((By.ID, "__BVID__66___BV_modal_header_")))
         time.sleep(5)
         print("package selection popup appeared")
 
@@ -297,7 +297,7 @@ def select_package_type_personal(package_name, test_case):
     """Select package type in Personal Center popup"""
     with track_step(test_case, "Select Package Type", f"Select {package_name} in dropdown"):
         from selenium.webdriver.support.ui import Select
-        dropdown = wait.until(EC.presence_of_element_located((By.ID, "__BVID__555")))
+        dropdown = wait.until(EC.presence_of_element_located((By.ID, "__BVID__548")))
         select = Select(dropdown)
         
         # Map package names to their values
@@ -319,7 +319,7 @@ def select_package_type_personal_wallet_no_balance(package_name, test_case):
     """Select package type in Personal Center popup"""
     with track_step(test_case, "Select Package Type", f"Select {package_name} in dropdown"):
         from selenium.webdriver.support.ui import Select
-        dropdown = wait.until(EC.presence_of_element_located((By.ID, "__BVID__105")))
+        dropdown = wait.until(EC.presence_of_element_located((By.ID, "__BVID__98")))
         select = Select(dropdown)
         
         # Map package names to their values
@@ -346,7 +346,7 @@ def input_random_account(test_case):
         # Generate random 8-character alphanumeric string
         account = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
         
-        account_field = wait.until(EC.element_to_be_clickable((By.ID, "__BVID__559")))
+        account_field = wait.until(EC.element_to_be_clickable((By.ID, "__BVID__552")))
         account_field.clear()
         account_field.send_keys(account)
         time.sleep(1)
@@ -361,7 +361,7 @@ def input_random_account_personal_wallet_no_balance(test_case):
         # Generate random 8-character alphanumeric string
         account = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
         
-        account_field = wait.until(EC.element_to_be_clickable((By.ID, "__BVID__109")))
+        account_field = wait.until(EC.element_to_be_clickable((By.ID, "__BVID__102")))
         account_field.clear()
         account_field.send_keys(account)
         time.sleep(1)
@@ -403,33 +403,15 @@ def close_wechat_popup(test_case):
         time.sleep(1)
         print("WeChat popup closed")
 
-def verify_alipay_sandbox(test_case, max_retries=1, retry_delay=3):
-    """Verify Alipay sandbox opens with retry logic for intermittent redirects"""
-    for attempt in range(max_retries + 1):
-        try:
-            with track_step(test_case, "Verify Alipay", f"Check Alipay sandbox opens (attempt {attempt + 1})"):
-                driver.switch_to.window(driver.window_handles[-1])
-                
-                # Wait for redirects to complete and verify Alipay sandbox
-                wait.until(lambda d: "alipaydev.com" in d.current_url)
-                assert "alipaydev.com" in driver.current_url
-                print(f"✅ Alipay sandbox verified on attempt {attempt + 1}: {driver.current_url}")
-                return True
-                
-        except Exception as e:
-            if attempt < max_retries:
-                print(f"⚠️ Alipay verification failed on attempt {attempt + 1}: {e}. Retrying in {retry_delay} seconds...")
-                time.sleep(retry_delay)
-                # Switch back to main window before retry
-                driver.switch_to.window(driver.window_handles[0])
-            else:
-                print(f"❌ Alipay verification failed after {max_retries + 1} attempts: {e}")
-                return False
-        finally:
-            # Switch back to main window
-            driver.switch_to.window(driver.window_handles[0])
-    
-    return False
+def verify_alipay_sandbox(test_case):
+    """Verify Alipay sandbox opens"""
+    with track_step(test_case, "Verify Alipay", "Check Alipay sandbox opens"):
+        driver.switch_to.window(driver.window_handles[-1])
+        wait.until(lambda d: "alipaydev.com" in d.current_url)
+        assert "alipaydev.com" in driver.current_url
+        print("✅ Alipay sandbox verified")
+        # Switch back to main window
+        driver.switch_to.window(driver.window_handles[0])
 
 def verify_recharge_redirect(test_case):
     """Verify redirect to recharge page when no balance"""
@@ -490,9 +472,11 @@ def test_alipay_payment(report_dir, test_case):
         click_pay_now(test_case)
         
         # Verify Alipay sandbox
-        if not verify_alipay_sandbox(test_case):
-            return False
-        return True
+        with track_step(test_case, "Verify Alipay", "Check Alipay sandbox opens"):
+            driver.switch_to.window(driver.window_handles[-1])
+            wait.until(lambda d: "alipaydev.com" in d.current_url)
+            assert "alipaydev.com" in driver.current_url
+            return True
             
     except Exception as e:
         print(f"Alipay test failed: {str(e)}")
@@ -576,9 +560,11 @@ def test_alipay_payment_static(report_dir, test_case):
         click_pay_now(test_case)
         
         # Verify Alipay sandbox
-        if not verify_alipay_sandbox(test_case):
-            return False
-        return True
+        with track_step(test_case, "Verify Alipay", "Check Alipay sandbox opens"):
+            driver.switch_to.window(driver.window_handles[-1])
+            wait.until(lambda d: "alipaydev.com" in d.current_url)
+            assert "alipaydev.com" in driver.current_url
+            return True
             
     except Exception as e:
         print(f"Alipay test failed: {str(e)}")
@@ -662,9 +648,11 @@ def test_alipay_payment_standard(report_dir, test_case):
         click_pay_now(test_case)
         
         # Verify Alipay sandbox
-        if not verify_alipay_sandbox(test_case):
-            return False
-        return True
+        with track_step(test_case, "Verify Alipay", "Check Alipay sandbox opens"):
+            driver.switch_to.window(driver.window_handles[-1])
+            wait.until(lambda d: "alipaydev.com" in d.current_url)
+            assert "alipaydev.com" in driver.current_url
+            return True
             
     except Exception as e:
         print(f"Alipay test failed: {str(e)}")
@@ -748,9 +736,11 @@ def test_alipay_payment_dedicated(report_dir, test_case):
         click_pay_now(test_case)
         
         # Verify Alipay sandbox
-        if not verify_alipay_sandbox(test_case):
-            return False
-        return True
+        with track_step(test_case, "Verify Alipay", "Check Alipay sandbox opens"):
+            driver.switch_to.window(driver.window_handles[-1])
+            wait.until(lambda d: "alipaydev.com" in d.current_url)
+            assert "alipaydev.com" in driver.current_url
+            return True
             
     except Exception as e:
         print(f"Alipay test failed: {str(e)}")
@@ -840,8 +830,7 @@ def test_personal_alipay_supreme(report_dir, test_case):
         input_random_account(test_case)
         select_payment_method_personal("支付宝", test_case)
         click_pay_personal(test_case)
-        if not verify_alipay_sandbox(test_case):
-            return False
+        verify_alipay_sandbox(test_case)
         return True
     except Exception as e:
         print(f"Personal Center Dynamic Supreme Alipay test failed: {str(e)}")
@@ -898,8 +887,7 @@ def test_personal_alipay_static(report_dir, test_case):
         input_random_account(test_case)
         select_payment_method_personal("支付宝", test_case)
         click_pay_personal(test_case)
-        if not verify_alipay_sandbox(test_case):
-            return False
+        verify_alipay_sandbox(test_case)
         return True
     except Exception as e:
         print(f"Personal Center Static IP Alipay test failed: {str(e)}")
@@ -956,8 +944,7 @@ def test_personal_alipay_standard(report_dir, test_case):
         input_random_account(test_case)
         select_payment_method_personal("支付宝", test_case)
         click_pay_personal(test_case)
-        if not verify_alipay_sandbox(test_case):
-            return False
+        verify_alipay_sandbox(test_case)
         return True
     except Exception as e:
         print(f"Personal Center Dynamic Standard Alipay test failed: {str(e)}")
@@ -1014,8 +1001,7 @@ def test_personal_alipay_dedicated(report_dir, test_case):
         input_random_account(test_case)
         select_payment_method_personal("支付宝", test_case)
         click_pay_personal(test_case)
-        if not verify_alipay_sandbox(test_case):
-            return False
+        verify_alipay_sandbox(test_case)
         return True
     except Exception as e:
         print(f"Personal Center Dynamic Dedicated Alipay test failed: {str(e)}")
