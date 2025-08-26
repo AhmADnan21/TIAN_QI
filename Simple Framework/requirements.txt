@@ -1,7 +1,0 @@
-selenium==4.15.2
-pytest==7.4.3
-webdriver-manager==4.0.1
-pymysql==1.1.0
-sqlalchemy==2.0.23
-pytest-db==0.3.0
-psycopg2-binary==2.9.9 
